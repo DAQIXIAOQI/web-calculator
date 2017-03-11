@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        div,
+        p,
+        ul,
+        li {
+            font-weight: 900;
+            font-size: 120%;
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        #content {
+            margin: auto;
+            width: 416px;
+            height: auto;
+            background: black;
+        }
+        
+        #top {
+            width: 100%;
+            color: white;
+            line-height: 120%;
+            text-align: right;
+        }
+        
+        input {
+            background: lightgray;
+            width: 100%;
+            border: 0;
+            text-align: right;
+        }
+        
+        #main input:first-child {
+            font-size: 100%;
+        }
+        
+        #numinput {
+            margin-top: -2px;
+            height: 82px;
+            font-size: 300%;
+        }
+        
+        ul li {
+            width: 80px;
+            display: block;
+            margin: 10px;
+            background: white;
+            float: left;
+            padding: 10px 0px;
+            text-align: center;
+            border: outset lightgray 2px;
+            border-radius: 3px;
+        }
+        
+        ul li:hover,
+        ul li:active {
+            background: gray;
+            border: inset gray 2px;
+        }
+        
+        #equal {
+            padding: 34px 0px;
+            line-height: 200%;
+            float: right;
+        }
+        
+        #zero {
+            width: 184px;
+        }
+        
+        .clear {
+            clear: both;
+        }
+
+    </style>
+    <script src="mylibrary.js" type="text/javascript"></script>
+    <script>
+        window.onload = function() {
+            var oinput = document.getElementsByTagName("input")[0];
+            var ainput = document.getElementsByTagName("input")[1];
+            var oc = document.getElementById("clear");
+            var ofun = getClassName("function",document);
+        //    var ofun = document.getElementsByClassName("function");
+            var oequal = document.getElementById("equal");
+            var opoint = document.getElementById("point");
+            var onum = getClassName("num",document);
+       //     var onum = document.getElementsByClassName("num");
+            var s = 0;   // 确认是否完成计算参数        
+            var c = 0;   // 检测输入是否超过9位数
+
+            oc.onclick = function clear() {
+                    oinput.value = "";
+                    ainput.value = "0";
+                    c = 0 ;
+                } //删除键功能
+
+            opoint.onclick = function() {
+                    if (s == 0 && ainput.value.search(/[\.\%\/\*\-\+]/) == -1)
+                        ainput.value = ainput.value + ".";
+
+
+                } //.键功能
+
+            for (var i = 0; i < ofun.length; i++) {
+                ofun[i].onclick = function() {
+                    if (s != 0) {
+                        oinput.value = ainput.value + this.innerHTML;
+                        ainput.value = this.innerHTML;
+                        s = 0;
+                    } else {
+                        if (ainput.value.slice(-1).search(/[\.]/) == -1) {
+                            if (ainput.value.search(/[\/\*\-\+\%]/) != -1) {
+                                oinput.value = oinput.value.replace(/.$/, this.innerHTML);
+                                ainput.value = this.innerHTML;
+                            } else {
+                                oinput.value = oinput.value + ainput.value;
+                                ainput.value = this.innerHTML;
+                                oinput.value = oinput.value + ainput.value;
+                            }
+                            c = 0;
+                        }
+                    }
+                }
+            } //符号键功能
+
+            for (var i = 0; i < onum.length; i++) {
+                onum[i].onclick = function() {
+                    if (s != 0) {
+                        oinput.value = "";
+                        ainput.value = this.innerHTML;
+                        s = 0;
+                    } else {
+                        if(c == 0){
+                        if (ainput.value.length == 1 && ainput.value == 0) {
+                            ainput.value = this.innerHTML; //第一位为零时，键入的第一个数字将会替换掉零
+                        } else {
+                            if (ainput.value.search(/[\/\*\-\+\%]/) != -1) {
+                                ainput.value = this.innerHTML; //当键入完符号后，默认为符号标志，键入的第一个数字将会替换掉它
+                            } else {
+                                ainput.value = ainput.value + this.innerHTML;
+                            }
+                        }
+                        check();
+                    }
+                    }
+                }
+            } //数字键功能
+
+            oequal.onclick = function() {
+                    if (s == 0 && ainput.value.search(/[\/\*\-\+\%]/) == -1) {
+                        var a = oinput.value + ainput.value;
+                        oinput.value = a;
+                        a = a.replace(/\%\/\*\-\+/, '');
+                        ainput.value = eval(a);
+                        c = 0;
+                        s = 1;
+
+                    }
+                } //=键功能
+            
+            function check() {
+                if (ainput.value.length >= 9) {
+                    alert("the nums you input are bigger than nine !!");
+                    c = 1;
+                }
+                else{
+                    c = 0 ;
+                }
+            }// c参数功能函数
+
+        } 
+
+    </script>
+</head>
+
+<body>
+    <div id="content">
+        <p id="top"> this is top section </p>
+        <div id="main">
+            <input type="text" value="" readonly="readonly">
+          
+            <input id="numinput" type="text" value="0" readonly="readonly" maxlength="9">
+        </div>
+        <ul>
+            <li id="clear">c</li>
+            <li class="function">%</li>
+            <li class="function">/</li>
+            <li class="function">*</li>
+            <li class="num">7</li>
+            <li class="num">8</li>
+            <li class="num">9</li>
+            <li class="function">-</li>
+            <li class="num">4</li>
+            <li class="num">5</li>
+            <li class="num">6</li>
+            <li class="function">+</li>
+            <li class="num">1</li>
+            <li class="num">2</li>
+            <li class="num">3</li>
+            <li id="equal">=</li>
+            <li class="num" id="zero">0</li>
+            <li id="point">.</li>
+            <div class="clear"></div>
+        </ul>
+    </div>
+</body>
+
+</html>
